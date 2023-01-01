@@ -10,7 +10,7 @@ import gleam/result
 pub fn main() {
   let handlers =
     handlers.new_builder()
-    |> handlers.on_ready(fn(data) {
+    |> handlers.on_ready(fn(data, _client) {
       io.println(
         [
           "Logged in as ",
@@ -22,15 +22,15 @@ pub fn main() {
         |> string.join(with: ""),
       )
     })
-    |> handlers.on_message(fn(_message) { io.print("Message Received!") })
+    |> handlers.on_message(fn(_, _) { io.print("Message Received!") })
 
   let token =
     os.get_env("DISCORD_TOKEN")
     |> result.unwrap(or: "set.a.token")
 
   let _client =
-    shimmer.new(token, handlers)
-    |> shimmer.connect
+    shimmer.new(token)
+    |> shimmer.connect(handlers)
 
   process.sleep_forever()
 }
